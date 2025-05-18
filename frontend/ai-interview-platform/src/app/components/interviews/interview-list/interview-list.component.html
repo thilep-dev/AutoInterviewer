@@ -1,0 +1,105 @@
+<mat-drawer-container class="interviews-container">
+  <mat-drawer #drawer position="end" mode="over" [opened]="isDrawerOpen" (closedStart)="closeDrawer()" class="interview-drawer">
+    <div class="drawer-header">
+      <span>{{ selectedInterviewId ? 'Edit Interview' : 'Add Interview' }}</span>
+      <button mat-icon-button (click)="closeDrawer()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="drawer-content"> 
+      <app-interview-form (formClose)="closeDrawer()" [interviewId]="selectedInterviewId"></app-interview-form>
+    </div>
+  </mat-drawer>
+
+  <div class="interviews-list-content">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Interviews</mat-card-title>
+        <div class="header-actions">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search interviews...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="addInterview()">
+            <mat-icon>add</mat-icon>
+            Add Interview
+          </button>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="error-message" *ngIf="error">
+          {{ error }}
+        </div>
+
+        <div class="loading-spinner" *ngIf="loading">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <div class="table-container" *ngIf="!loading">
+          <table mat-table [dataSource]="dataSource" matSort>
+            <!-- Candidate Name Column -->
+            <ng-container matColumnDef="candidateName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Candidate</th>
+              <td mat-cell *matCellDef="let interview">{{ interview.candidateName }}</td>
+            </ng-container>
+
+            <!-- Job Title Column -->
+            <ng-container matColumnDef="jobTitle">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Job</th>
+              <td mat-cell *matCellDef="let interview">{{ interview.jobTitle }}</td>
+            </ng-container>
+
+            <!-- Scheduled Date Column -->
+            <ng-container matColumnDef="scheduledDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Scheduled</th>
+              <td mat-cell *matCellDef="let interview">{{ interview.scheduledTime | date:'short' }}</td>
+            </ng-container>
+
+            <!-- Duration Column -->
+            <ng-container matColumnDef="duration">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Duration (min)</th>
+              <td mat-cell *matCellDef="let interview">{{ interview.duration }}</td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+              <td mat-cell *matCellDef="let interview">{{ statusLabels[interview.status] }}</td>
+            </ng-container>
+
+            <!-- Mode Column -->
+            <ng-container matColumnDef="mode">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Mode</th>
+              <td mat-cell *matCellDef="let interview">{{ modeLabels[interview.mode] }}</td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let interview">
+                <button mat-icon-button color="primary" (click)="editInterview(interview.id)" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteInterview(interview.id)" matTooltip="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="7">No data matching the filter "{{ dataSource.filter }}"</td>
+            </tr>
+          </table>
+
+          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of interviews"></mat-paginator>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</mat-drawer-container> 

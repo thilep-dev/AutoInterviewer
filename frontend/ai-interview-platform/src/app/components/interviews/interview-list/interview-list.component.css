@@ -1,0 +1,156 @@
+.interview-list-container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  color: #333;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.error-message {
+  color: #f44336;
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.table-container {
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: center;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.scheduled {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-badge.inprogress {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status-badge.completed {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-badge.cancelled {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.status-badge.rescheduled {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .mat-column-actions {
+    width: 80px;
+  }
+}
+
+.interviews-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.interview-drawer {
+  width: 500px;
+  max-width: 90vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 16px rgba(0,0,0,0.15);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #3f51b5;
+  color: #fff;
+  padding: 20px 24px 16px 24px;
+  font-size: 1.4rem;
+  font-weight: 500;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.close-btn {
+  color: #fff;
+}
+
+.drawer-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: transparent;
+  height: auto;
+  box-sizing: border-box;
+}
+
+mat-card, mat-card-content, form {
+  height: unset !important;
+  overflow: unset !important;
+  max-height: unset !important;
+}
+
+.app-interview-form-container, form, mat-card, mat-card-content {
+  height: auto !important;
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+.drawer-content, .interview-drawer {
+  height: 100vh !important;
+  display: flex;
+  flex-direction: column;
+} 

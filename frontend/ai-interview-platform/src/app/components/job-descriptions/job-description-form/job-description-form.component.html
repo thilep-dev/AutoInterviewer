@@ -1,0 +1,106 @@
+<div class="form-container">
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="jobDescriptionForm" (ngSubmit)="onSubmit()" id="jobDescriptionForm">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" required>
+            <mat-error *ngIf="jobDescriptionForm.get('title')?.hasError('required')">
+              Title is required
+            </mat-error>
+            <mat-error *ngIf="jobDescriptionForm.get('title')?.hasError('minlength')">
+              Title must be at least 3 characters
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Department</mat-label>
+            <input matInput formControlName="department" required>
+            <mat-error *ngIf="jobDescriptionForm.get('department')?.hasError('required')">
+              Department is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Location</mat-label>
+            <input matInput formControlName="location" required>
+            <mat-error *ngIf="jobDescriptionForm.get('location')?.hasError('required')">
+              Location is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="type" required>
+              <mat-option *ngFor="let type of jobTypes" [value]="type">
+                {{ type }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobDescriptionForm.get('type')?.hasError('required')">
+              Type is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3" required></textarea>
+          <mat-error *ngIf="jobDescriptionForm.get('description')?.hasError('required')">
+            Description is required
+          </mat-error>
+          <mat-error *ngIf="jobDescriptionForm.get('description')?.hasError('minlength')">
+            Description must be at least 50 characters
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Requirements</mat-label>
+          <textarea matInput formControlName="requirements" rows="3" required></textarea>
+          <mat-error *ngIf="jobDescriptionForm.get('requirements')?.hasError('required')">
+            Requirements are required
+          </mat-error>
+          <mat-error *ngIf="jobDescriptionForm.get('requirements')?.hasError('minlength')">
+            Requirements must be at least 50 characters
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Responsibilities</mat-label>
+          <textarea matInput formControlName="responsibilities" rows="3" required></textarea>
+          <mat-error *ngIf="jobDescriptionForm.get('responsibilities')?.hasError('required')">
+            Responsibilities are required
+          </mat-error>
+          <mat-error *ngIf="jobDescriptionForm.get('responsibilities')?.hasError('minlength')">
+            Responsibilities must be at least 50 characters
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status" required>
+            <mat-option *ngFor="let status of jobStatuses" [value]="status">
+              {{ status }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="jobDescriptionForm.get('status')?.hasError('required')">
+            Status is required
+          </mat-error>
+        </mat-form-field>
+
+        <div class="error-message" *ngIf="error">
+          {{ error }}
+        </div>
+      </form>
+    </mat-card-content>
+    <div class="form-actions">
+      <button mat-button type="button" (click)="onCancel()" [disabled]="loading">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!jobDescriptionForm.valid || loading" form="jobDescriptionForm">
+        <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+        <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+      </button>
+    </div>
+  </mat-card>
+</div> 

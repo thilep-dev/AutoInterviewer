@@ -1,0 +1,99 @@
+<mat-drawer-container class="job-descriptions-container">
+  <mat-drawer #drawer position="end" mode="over" [opened]="isDrawerOpen" (closedStart)="closeDrawer()" class="job-description-drawer" [style.width.px]="700" >
+    <div class="drawer-header" style="background: #3f51b5; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
+      <span style="font-size: 1.3rem; font-weight: 500; margin: 0 auto;">{{ selectedJobDescriptionId ? 'Edit Job Description' : 'Add Job Description' }}</span>
+      <button mat-icon-button (click)="closeDrawer()" class="close-btn" style="color: #fff;">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="drawer-content">
+      <app-job-description-form (formClose)="closeDrawer()" [jobDescriptionId]="selectedJobDescriptionId"></app-job-description-form>
+    </div>
+  </mat-drawer>
+
+  <div class="job-descriptions-list-content">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Job Descriptions</mat-card-title>
+        <div class="header-actions">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search job descriptions...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="addJobDescription()">
+            <mat-icon>add</mat-icon>
+            Add Job Description
+          </button>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="error-message" *ngIf="error">
+          {{ error }}
+        </div>
+
+        <div class="loading-spinner" *ngIf="loading">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <div class="table-container" *ngIf="!loading">
+          <table mat-table [dataSource]="dataSource" matSort>
+            <!-- Title Column -->
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+              <td mat-cell *matCellDef="let job">{{ job.title }}</td>
+            </ng-container>
+
+            <!-- Department Column -->
+            <ng-container matColumnDef="department">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Department</th>
+              <td mat-cell *matCellDef="let job">{{ job.department }}</td>
+            </ng-container>
+
+            <!-- Location Column -->
+            <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
+              <td mat-cell *matCellDef="let job">{{ job.location }}</td>
+            </ng-container>
+
+            <!-- Type Column -->
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+              <td mat-cell *matCellDef="let job">{{ job.type }}</td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+              <td mat-cell *matCellDef="let job">{{ job.status }}</td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let job">
+                <button mat-icon-button color="primary" (click)="editJobDescription(job.id)" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteJobDescription(job.id)" matTooltip="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="6">No data matching the filter "{{ dataSource.filter }}"</td>
+            </tr>
+          </table>
+
+          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of job descriptions"></mat-paginator>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</mat-drawer-container> 

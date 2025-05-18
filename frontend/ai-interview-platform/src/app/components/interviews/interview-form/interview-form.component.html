@@ -1,0 +1,132 @@
+<div class="form-container">
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="interviewForm" (ngSubmit)="onSubmit()" id="interviewForm">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Candidate</mat-label>
+            <mat-select formControlName="candidateId" required>
+              <mat-option *ngFor="let candidate of candidates" [value]="candidate.id">
+                {{ candidate.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('candidateId')?.hasError('required')">
+              Candidate is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Job</mat-label>
+            <mat-select formControlName="jobId" required>
+              <mat-option *ngFor="let job of jobs" [value]="job.id">
+                {{ job.title }} - {{ job.department }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('jobId')?.hasError('required')">
+              Job is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Scheduled Date</mat-label>
+            <input matInput type="datetime-local" formControlName="scheduledTime" required>
+            <mat-error *ngIf="interviewForm.get('scheduledTime')?.hasError('required')">
+              Scheduled date is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Duration (minutes)</mat-label>
+            <input matInput type="number" formControlName="duration" required min="1">
+            <mat-error *ngIf="interviewForm.get('duration')?.hasError('required')">
+              Duration is required
+            </mat-error>
+            <mat-error *ngIf="interviewForm.get('duration')?.hasError('min')">
+              Duration must be at least 1 minute
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status" required>
+              <mat-option *ngFor="let status of interviewStatuses" [value]="status">
+                {{ interviewStatusLabels[status] }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('status')?.hasError('required')">
+              Status is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Mode</mat-label>
+            <mat-select formControlName="mode" required>
+              <mat-option *ngFor="let mode of interviewModes" [value]="mode">
+                {{ interviewModeLabels[mode] }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('mode')?.hasError('required')">
+              Mode is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Difficulty</mat-label>
+            <mat-select formControlName="difficulty" required>
+              <mat-option *ngFor="let diff of interviewDifficulties" [value]="diff">
+                {{ interviewDifficultyLabels[diff] }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('difficulty')?.hasError('required')">
+              Difficulty is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Schedule Type</mat-label>
+            <mat-select formControlName="scheduleType" required>
+              <mat-option *ngFor="let sched of scheduleTypes" [value]="sched">
+                {{ scheduleTypeLabels[sched] }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('scheduleType')?.hasError('required')">
+              Schedule type is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Notes</mat-label>
+          <textarea matInput formControlName="notes" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Feedback</mat-label>
+          <textarea matInput formControlName="feedback" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Rating</mat-label>
+          <input matInput type="number" formControlName="rating" min="1" max="10">
+        </mat-form-field>
+
+        <div class="error-message" *ngIf="error">
+          {{ error }}
+        </div>
+      </form>
+    </mat-card-content>
+    <div class="form-actions">
+      <button mat-button type="button" (click)="onCancel()" [disabled]="loading">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!interviewForm.valid || loading" form="interviewForm">
+        <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+        <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+      </button>
+    </div>
+  </mat-card>
+</div> 
