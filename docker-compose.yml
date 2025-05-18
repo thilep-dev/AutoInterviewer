@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+
+  judge0:
+    image: judge0/judge0:1.13.0
+    ports:
+      - "2358:2358"
+    environment:
+      - VIRTUAL_HOST=judge0
+      - VIRTUAL_PORT=2358
+      - SECRET_KEY=your-judge0-secret-key
+      - POSTGRES_HOST=judge0-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=judge0
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=judge0
+    depends_on:
+      - judge0-db
+
+  judge0-db:
+    image: postgres:13.0
+    environment:
+      - POSTGRES_USER=judge0
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=judge0
+    volumes:
+      - judge0-data:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
+volumes:
+  sqldata:
+  judge0-data:
+  ollama-data: 
