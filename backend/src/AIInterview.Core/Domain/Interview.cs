@@ -16,6 +16,8 @@ namespace AIInterview.Core.Domain
         public InterviewStatus Status { get; set; }
         public string MeetingRoomId { get; set; }
         public int Duration { get; set; } // Duration in minutes
+        public DateTime? CompletedAt { get; set; }
+        public DateTime? SubmittedAt { get; set; }
         public ICollection<InterviewQuestion> Questions { get; set; }
         public ICollection<CodeSubmission> CodeSubmissions { get; set; }
         public ICollection<InterviewParticipant> Participants { get; set; }

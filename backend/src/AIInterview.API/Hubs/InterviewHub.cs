@@ -1,60 +1,61 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using AIInterview.Core.Interfaces;
 using AIInterview.Core.Domain;
 
 namespace AIInterview.API.Hubs
 {
     public class InterviewHub : Hub
     {
-        public async Task JoinInterview(string interviewId)
+        private readonly IInterviewService _interviewService;
+
+        public InterviewHub(IInterviewService interviewService)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, interviewId);
+            _interviewService = interviewService;
         }
 
-        public async Task LeaveInterview(string interviewId)
+        public async Task JoinInterview(Guid interviewId)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, interviewId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, interviewId.ToString());
         }
 
-        public async Task SendQuestion(string interviewId, string questionText)
+        public async Task LeaveInterview(Guid interviewId)
         {
-            await Clients.Group(interviewId).SendAsync("ReceiveQuestion", questionText);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, interviewId.ToString());
         }
 
-        public async Task SendAnswer(string interviewId, string answer)
+        public async Task SendMessage(Guid interviewId, string message)
         {
-            await Clients.Group(interviewId).SendAsync("ReceiveAnswer", answer);
+            await Clients.Group(interviewId.ToString()).SendAsync("ReceiveMessage", Context.ConnectionId, message);
         }
 
-        public async Task SendCodeSubmission(string interviewId, string code, string language)
+        public async Task SubmitAnswer(Guid interviewId, string answer)
         {
-            await Clients.Group(interviewId).SendAsync("ReceiveCodeSubmission", code, language);
+            var feedback = await _interviewService.EvaluateResponseAsync(interviewId, answer);
+            await Clients.Group(interviewId.ToString()).SendAsync("ReceiveFeedback", feedback);
         }
 
-        public async Task SendEvaluation(string interviewId, string evaluation)
+        public async Task RequestNextQuestion(Guid interviewId)
         {
-            await Clients.Group(interviewId).SendAsync("ReceiveEvaluation", evaluation);
+            var question = await _interviewService.GenerateNextQuestionAsync(interviewId);
+            await Clients.Group(interviewId.ToString()).SendAsync("ReceiveQuestion", question);
         }
 
-        public async Task SendParticipantJoined(string interviewId, string participantName, ParticipantRole role)
+        // WebRTC signaling
+        public async Task SendSignal(Guid interviewId, string signal)
         {
-            await Clients.Group(interviewId).SendAsync("ParticipantJoined", participantName, role);
+            await Clients.OthersInGroup(interviewId.ToString()).SendAsync("ReceiveSignal", Context.ConnectionId, signal);
         }
 
-        public async Task SendParticipantLeft(string interviewId, string participantName)
+        public async Task ShareScreen(Guid interviewId, string streamId)
         {
-            await Clients.Group(interviewId).SendAsync("ParticipantLeft", participantName);
+            await Clients.OthersInGroup(interviewId.ToString()).SendAsync("ScreenShared", Context.ConnectionId, streamId);
         }
 
-        public async Task SendVideoStream(string interviewId, string streamData)
+        public async Task StopScreenShare(Guid interviewId)
         {
-            await Clients.Group(interviewId).SendAsync("ReceiveVideoStream", streamData);
-        }
-
-        public async Task SendAudioStream(string interviewId, string streamData)
-        {
-            await Clients.Group(interviewId).SendAsync("ReceiveAudioStream", streamData);
+            await Clients.OthersInGroup(interviewId.ToString()).SendAsync("ScreenShareStopped", Context.ConnectionId);
         }
 
         public override async Task OnConnectedAsync()

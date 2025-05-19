@@ -140,8 +140,18 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     this.interviewService.getInterview(id).subscribe({
       next: (interview: Interview) => {
         this.interviewForm.patchValue({
-          ...interview,
-          scheduledTime: interview.scheduledTime ? new Date(interview.scheduledTime).toISOString().substring(0, 16) : ''
+          candidateId: interview.candidateId,
+          jobId: interview.jobDescriptionId,
+          scheduledTime: interview.scheduledTime ? new Date(interview.scheduledTime).toISOString().substring(0, 16) : '',
+          duration: interview.duration,
+          status: interview.status,
+          mode: interview.mode,
+          difficulty: interview.difficulty,
+          scheduleType: interview.scheduleType,
+          meetingRoomId: interview.meetingRoomId,
+          notes: interview.notes || '',
+          feedback: interview.feedback || '',
+          rating: interview.rating || null
         });
         this.loading = false;
       },
@@ -158,7 +168,8 @@ export class InterviewFormComponent implements OnInit, OnChanges {
       this.loading = true;
       const formData = this.interviewForm.value;
 
-      const interviewData = {
+      // Build interviewData, only include id if it's a string
+      const interviewData: any = {
         candidateId: formData.candidateId,
         jobDescriptionId: formData.jobId,
         mode: formData.mode,
@@ -167,10 +178,17 @@ export class InterviewFormComponent implements OnInit, OnChanges {
         scheduledTime: formData.scheduledTime ? new Date(formData.scheduledTime).toISOString() : '',
         status: formData.status,
         meetingRoomId: formData.meetingRoomId,
+        duration: formData.duration,
+        notes: formData.notes || '',
+        feedback: formData.feedback || '',
+        rating: formData.rating || null,
         questions: [],
         participants: [],
         codeSubmissions: []
       };
+      if (this.isEditMode && typeof this.interviewId === 'string') {
+        interviewData.id = this.interviewId;
+      }
 
       const request$ = this.isEditMode
         ? this.interviewService.updateInterview(this.interviewId!, interviewData)

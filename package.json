@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@angular/animations": "^19.2.11"
+    "@angular/animations": "^19.2.11",
+    "@microsoft/signalr": "^8.0.7"
   }
 }

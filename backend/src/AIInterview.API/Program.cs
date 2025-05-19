@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using AIInterview.Infrastructure.Data;
 using AIInterview.Infrastructure.Services;
+using AIInterview.Infrastructure.Repositories;
 using AIInterview.Core.Interfaces;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Ollama;
@@ -14,7 +15,12 @@ using AIInterview.API.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -49,11 +55,12 @@ builder.Services.AddSignalR();
 // Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowFrontend", builder =>
     {
-        builder.AllowAnyOrigin()
+        builder.WithOrigins("http://localhost:4200")
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+               .AllowCredentials();
     });
 });
 
@@ -76,7 +83,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Configure Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AIInterview.API")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AIInterview.Infrastructure")));
 
 // Configure Semantic Kernel (latest pre-release)
 var kernel = Kernel.CreateBuilder()
@@ -88,6 +95,9 @@ builder.Services.AddSingleton(kernel);
 
 // Register Services
 builder.Services.AddScoped<IAIInterviewService, AIInterviewService>();
+builder.Services.AddScoped<ICodeAssessmentService, CodeAssessmentService>();
+builder.Services.AddScoped<ICodeSubmissionRepository, CodeSubmissionRepository>();
+builder.Services.AddHttpClient<ICodeAssessmentService, CodeAssessmentService>();
 
 var app = builder.Build();
 
@@ -99,14 +109,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseRouting();
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapHub<AIInterview.API.SignalR.InterviewCallHub>("/callHub");
+    endpoints.MapHub<InterviewHub>("/interviewHub");
 });
 
 app.Run();

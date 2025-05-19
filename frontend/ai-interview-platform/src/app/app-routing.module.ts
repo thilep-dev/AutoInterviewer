@@ -1,10 +1,20 @@
-import { Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { MeetingComponent } from './features/meeting/meeting.component';
 
-export const routes: Routes = [
+const routes: Routes = [
+  {
+    path: 'meeting/:roomId',
+    component: MeetingComponent
+  },
+  {
+    path: 'interview/:id',
+    loadChildren: () => import('./features/interview/interview.module').then(m => m.InterviewModule)
+  },
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'interview/new',
     pathMatch: 'full'
   },
   {
@@ -35,4 +45,10 @@ export const routes: Routes = [
     path: '**',
     redirectTo: 'dashboard'
   }
-]; 
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { } 
