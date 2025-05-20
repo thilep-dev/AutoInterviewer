@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { MeetingComponent } from './features/meeting/meeting.component';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,11 @@ export const routes: Routes = [
   {
     path: 'interviews',
     loadChildren: () => import('./components/interviews/interviews.module').then(m => m.routes),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'meeting/:roomId',
+    component: MeetingComponent,
     canActivate: [AuthGuard]
   },
   {

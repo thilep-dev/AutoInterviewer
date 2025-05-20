@@ -57,10 +57,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", builder =>
     {
-        builder.WithOrigins("http://localhost:4200")
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               .AllowCredentials();
+        builder.WithOrigins(
+            "http://10.1.30.48:4200",
+            "http://localhost:4200"
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
 
@@ -98,6 +101,7 @@ builder.Services.AddScoped<IAIInterviewService, AIInterviewService>();
 builder.Services.AddScoped<ICodeAssessmentService, CodeAssessmentService>();
 builder.Services.AddScoped<ICodeSubmissionRepository, CodeSubmissionRepository>();
 builder.Services.AddHttpClient<ICodeAssessmentService, CodeAssessmentService>();
+builder.Services.AddScoped<IInterviewService, InterviewService>();
 
 var app = builder.Build();
 

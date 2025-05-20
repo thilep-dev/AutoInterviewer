@@ -192,10 +192,6 @@ export class VideoComponent implements OnInit, OnDestroy {
       }),
       this.route.params.subscribe(params => {
         this.roomId = params['roomId'];
-        if (this.roomId) {
-          // Start the call when we have the room ID
-          this.startCall();
-        }
       })
     );
   }

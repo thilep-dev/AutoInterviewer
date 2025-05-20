@@ -43,9 +43,9 @@ namespace AIInterview.API.Hubs
         }
 
         // WebRTC signaling
-        public async Task SendSignal(Guid interviewId, string signal)
+        public async Task SendSignal(string roomId, object signal)
         {
-            await Clients.OthersInGroup(interviewId.ToString()).SendAsync("ReceiveSignal", Context.ConnectionId, signal);
+            await Clients.OthersInGroup(roomId).SendAsync("ReceiveSignal", Context.ConnectionId, signal);
         }
 
         public async Task ShareScreen(Guid interviewId, string streamId)
@@ -67,5 +67,12 @@ namespace AIInterview.API.Hubs
         {
             await base.OnDisconnectedAsync(exception);
         }
+
+        public async Task JoinRoom(string roomId)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+        }
+
+        
     }
 } 

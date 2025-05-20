@@ -21,9 +21,7 @@ export class WebRTCService {
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${environment.signalRUrl}/interviewHub`, {
-        withCredentials: true,
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets
+        withCredentials: true
       })
       .withAutomaticReconnect()
       .build();
